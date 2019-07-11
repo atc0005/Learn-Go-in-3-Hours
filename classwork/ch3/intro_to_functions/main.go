@@ -6,19 +6,25 @@ import "fmt"
 // Go doesn't have optional parameters, named parameters or function
 // overloading
 
+func divAndRemainder(a int, b int) (int, int) {
+	return a / b, a % b
+}
+
 func addNumbers(a int, b int) int {
 	return a + b
 }
 
 func main() {
 
-	a := addNumbers(2, 3)
-	fmt.Println(a)
+	div, remainder := divAndRemainder(2, 3)
+	fmt.Println(div, remainder)
 
-	a = addNumbers(4, 10)
-	fmt.Println(a)
+	div, _ = divAndRemainder(10, 4)
+	fmt.Println(div)
 
-	a = addNumbers(100, -100)
-	fmt.Println(a)
+	_, remainder = divAndRemainder(100, -100)
+	fmt.Println(remainder)
+
+	divAndRemainder(-1, 20)
 
 }
