@@ -6,12 +6,13 @@ func main() {
 
 	b := 2
 
-	myAddOne := func(a int) int {
+	myAddOne := func(a int) {
 
-		// read 'b' variable from main body of main()
-		return a + b
+		// write to 'b' variable from main body of main()
+		b = a + b
 	}
 
-	fmt.Println(myAddOne(1))
+	myAddOne(1)
+	fmt.Println(b)
 
 }
