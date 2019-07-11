@@ -13,15 +13,26 @@ func makeAdder(b int) func(int) int {
 	}
 }
 
+// receive a function (which takes an int and returns an int), return a
+// function (that takes an int and returns an int)
+func makeDoubler(f func(int) int) func(int) int {
+
+	// return our closure
+	return func(a int) int {
+		b := f(a)
+		return b * 2
+	}
+}
+
 func main() {
 
 	addOne := makeAdder(1)
-	addTwo := makeAdder(2)
+	doubleAddOne := makeDoubler(addOne)
 
-	fn := makeAdder(1)
-	fmt.Println(fn(2))
+	// fn := makeAdder(1)
+	// fmt.Println(fn(2))
 
 	fmt.Println(addOne(1))
-	fmt.Println(addTwo(1))
+	fmt.Println(doubleAddOne(1))
 
 }
