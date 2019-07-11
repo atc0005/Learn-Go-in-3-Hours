@@ -2,20 +2,19 @@ package main
 
 import (
 	"fmt"
-	"unicode/utf8"
+	"math"
+	"math/rand"
+	"time"
 )
 
 func main() {
 
-	s := "👋 🌍"
-
-	// Print the string
-	fmt.Println(s)
-
-	// Print the length in bytes
-	fmt.Println(len(s))
-
-	// Print the number of "runes"
-	fmt.Println(utf8.RuneCountInString(s))
+	rand.Seed(time.Now().UnixNano())
+	a := rand.Intn(10)
+	b := rand.Intn(10)
+	c := int(math.Max(float64(a), float64(b)))
+	fmt.Println(a)
+	fmt.Println(b)
+	fmt.Println(c, "is bigger")
 
 }
