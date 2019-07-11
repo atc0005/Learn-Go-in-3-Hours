@@ -2,15 +2,14 @@ package main
 
 import "fmt"
 
-func addOne(a int) int {
-	return a + 1
-}
-
 func main() {
 
-	// not invoking, referencing the original function
-	myAddOne := addOne
-	fmt.Println(addOne(1))
+	// anonymous function (declaring function within a function is otherwise
+	// not allowed)
+	myAddOne := func(a int) int {
+		return a + 1
+	}
+
 	fmt.Println(myAddOne(1))
 
 }
