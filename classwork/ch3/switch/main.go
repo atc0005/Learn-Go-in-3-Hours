@@ -8,13 +8,15 @@ import (
 func main() {
 
 	word := os.Args[1]
-	if word == "hello" {
+	switch word {
+	case "hello":
 		fmt.Println("Hi yourself")
-	} else if word == "goodbye" {
+	case "goodbye":
 		fmt.Println("So long!")
-	} else if word == "greetings" {
+	case "greetings":
 		fmt.Println("Salutations!")
-	} else {
+	default:
 		fmt.Println("I don't know what you said")
 	}
+
 }
