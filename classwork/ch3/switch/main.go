@@ -9,9 +9,15 @@ func main() {
 
 	word := os.Args[1]
 	switch word {
+	case "hi":
+		fmt.Println("Very informal!")
+		fallthrough
 	case "hello":
 		fmt.Println("Hi yourself")
-	case "goodbye":
+	case "farewell":
+
+	// Multiple options are supported for a single case statement
+	case "goodbye", "bye":
 		fmt.Println("So long!")
 	case "greetings":
 		fmt.Println("Salutations!")
