@@ -8,6 +8,7 @@ import (
 func main() {
 
 	word := os.Args[1]
+	greet := "greetings"
 	switch word {
 	case "hi":
 		fmt.Println("Very informal!")
@@ -19,7 +20,7 @@ func main() {
 	// Multiple options are supported for a single case statement
 	case "goodbye", "bye":
 		fmt.Println("So long!")
-	case "greetings":
+	case greet:
 		fmt.Println("Salutations!")
 	default:
 		fmt.Println("I don't know what you said")
