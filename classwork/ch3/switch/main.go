@@ -9,7 +9,7 @@ func main() {
 
 	word := os.Args[1]
 	greet := "greetings"
-	switch word {
+	switch l := len(word); word {
 	case "hi":
 		fmt.Println("Very informal!")
 		fallthrough
@@ -23,7 +23,7 @@ func main() {
 	case greet:
 		fmt.Println("Salutations!")
 	default:
-		fmt.Println("I don't know what you said")
+		fmt.Println("I don't know what you said but it was", l, "characters long")
 	}
 
 }
