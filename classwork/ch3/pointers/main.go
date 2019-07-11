@@ -3,21 +3,20 @@ package main
 import "fmt"
 
 func main() {
-	a := 10
-	b := &a // pointer or reference to a
-	c := a
-	fmt.Println(a, b, *b, c)
 
-	*b = 30
-	fmt.Println(a, b, *b, c)
+	// when declared this way, the variable is assigned the zero value for a
+	// pointer: nil
+	var b *int
 
-	c = 40
-	fmt.Println(a, b, *b, c)
+	fmt.Println(b)
+	// <nil>
 
-	// Example output (pointer address subject to change):
+	fmt.Println(*b)
+	// panic: runtime error: invalid memory address or nil pointer dereference
+	// [signal 0xc0000005 code=0x0 addr=0x0 pc=0x491190]
 	//
-	// 10 0xc000056058 10 10
-	// 30 0xc000056058 30 10
-	// 30 0xc000056058 30 40
-
+	// goroutine 1 [running]:
+	// main.main()
+	//         Learn-Go-in-3-Hours/classwork/ch3/pointers/main.go:12 +0x80
+	// exit status 2
 }
