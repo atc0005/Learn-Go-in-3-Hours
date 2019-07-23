@@ -2,27 +2,36 @@ package main
 
 import "fmt"
 
+func modMap(m map[string]int) {
+	m["cheese"] = 20
+}
+
 func main() {
 
-	m2 := map[string]int{
+	m := map[string]int{
 		"a": 1,
 		"b": 2,
-		"c": 50,
 	}
 
-	for k, v := range m2 {
-		fmt.Println(k, v)
-	}
+	// declared, but not initialized?
+	// i.e., safe to read, but not safe to write?
+	// https://blog.golang.org/go-maps-in-action
+	var m3 map[string]int
 
-	// show that the key/value is present
-	fmt.Println("b in m2:", m2["b"])
+	fmt.Println("goodbye in m:", m["goodbye"])
 
-	// remove the key
-	delete(m2, "b")
+	// maps are reference types, so assigning one map to another makes them
+	// both point to the same values in memory
+	m3 = m
 
-	// show that the key is no longer present
-	// note: zero value is returned
-	// presumably "comma ok" idiom is needed to confirm key is not present
-	// since a valid value for a key could be the zero value for the type
-	fmt.Println("b in m2:", m2["b"])
+	// this sets the value for the "goodbye" key for both m and m3
+	m3["goodbye"] = 400
+
+	// prove that we're seeing the same content
+	fmt.Println("goodbye in m3:", m3["goodbye"])
+	fmt.Println("goodbye in m:", m["goodbye"])
+
+	modMap(m)
+	fmt.Println("cheese in m:", m["cheese"])
+
 }
