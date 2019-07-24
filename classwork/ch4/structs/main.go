@@ -12,28 +12,45 @@ type Foo struct {
 
 func main() {
 
-	// declare uninitialized struct Foo
-	// fields are left at "zero" values
-	f := Foo{}
-	fmt.Println(f)
-
-	// declare Foo struct, initilize using positional arguments
-	// Note: When using this format, ALL fields have to be specified
-	g := Foo{10, "Hello"}
-	fmt.Println(g)
-
-	// declare Foo struct, initialize just 'b' field, leaving 'A' field at
-	// zero value. This initialization format is more common.
-	h := Foo{
-		b: "Goodbye",
+	f := Foo{
+		A: 20,
 	}
-	fmt.Println(h)
 
-	// Access public field, set to new value
-	h.A = 1000
-	fmt.Println(h.A)
+	// declare, initialize to zero values
+	var f2 Foo
 
-	// Show 'h' struct to visually compare against earlier values
-	fmt.Println(h)
+	// copy values into 'f2' struct from 'f' struct
+	// Note: The struct type is NOT a reference type, so values are copied by
+	// value and not by reference. This results in a copy of all values from
+	// 'f' into 'f2', leaving the structs pointed at different memory locations
+	f2 = f
+
+	// Because the structs are referring to entirely different memory locations,
+	// this makes it safe to modify one struct without concern of modifying
+	// the other struct unintentionally.
+	f2.A = 100
+
+	// prove that the values for each struct are distinct
+	fmt.Println(f2.A)
+	fmt.Println(f.A)
+
+	// create pointer to 'f' struct ...
+	//var f3 *Foo = &f
+	//
+	// Note: This works, but go-lint doesn't like it:
+	//
+	// should omit type *Foo from declaration of var f3; it will be inferred
+	// from the right-hand side
+	//
+	// Shorthand declaration:
+	f3 := &f
+
+	//  ... by which we can directly modify the original struct's public
+	// field 'A' to a new value
+	f3.A = 200
+
+	// Show that the values are NOT distinct
+	fmt.Println(f3.A)
+	fmt.Println(f.A)
 
 }
