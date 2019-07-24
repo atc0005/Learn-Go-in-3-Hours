@@ -10,47 +10,59 @@ type Foo struct {
 	b string
 }
 
+type Bar struct {
+	C string
+
+	// declare field of type Foo (which is itself a struct)
+	F Foo
+}
+
+type Baz struct {
+	D string
+
+	// embedded struct
+	Foo
+	// embedding is a very useful way to reuse a struct across multiple
+	// structs. Imagine defining an address struct, or a person struct, and
+	// embedding it into many different types avoiding a lot of nested dotted
+	// paths through struct references. While embedding might look like
+	// inheritance it isn't, embedding provides delegation. Baz is not a
+	// subtype of foo, it just contains a foo as a field.
+	//
+	// From "Introducing Go":
+	//
+	// Their example is a Person struct and an Android struct which embeds
+	// the Person struct (aka, an "anonymous" field). This is referred to as
+	// an "is a" relationship.
+}
+
 func main() {
 
-	f := Foo{
-		A: 20,
-	}
+	f := Foo{A: 10, b: "Hello"}
 
-	// declare, initialize to zero values
-	var f2 Foo
+	// we use the initialized 'f' struct as a value for the 'F' field below
+	b1 := Bar{C: "Fred", F: f}
 
-	// copy values into 'f2' struct from 'f' struct
-	// Note: The struct type is NOT a reference type, so values are copied by
-	// value and not by reference. This results in a copy of all values from
-	// 'f' into 'f2', leaving the structs pointed at different memory locations
-	f2 = f
+	// we need to use the intermediate struct 'F' in order to access 'A'
+	// Q: Why?
+	// Q: Is this because the struct 'F' is bundled within the enclosing struct
+	//    without "collapsing" the field values?
+	fmt.Println(b1.F.A)
 
-	// Because the structs are referring to entirely different memory locations,
-	// this makes it safe to modify one struct without concern of modifying
-	// the other struct unintentionally.
-	f2.A = 100
+	b2 := Baz{D: "Nancy", Foo: f}
 
-	// prove that the values for each struct are distinct
-	fmt.Println(f2.A)
-	fmt.Println(f.A)
+	// the intermediate struct is not needed to reference 'A' from the
+	// embedded struct.
+	// Q: Are the embedded struct fields "collapsed" into the enclosing struct?
+	// A: According to "Introducing Go", this is an "is a" relationship with
+	//    their example being a 'Person' struct and an 'Android' struct which
+	//    embeds the 'Person' struct (aka, an "anonymous" field). This reflects
+	//    that an Android "is a" Person, so naturally has the same fields and
+	//    (presumably in later code) the same methods?
+	fmt.Println(b2.A)
 
-	// create pointer to 'f' struct ...
-	//var f3 *Foo = &f
-	//
-	// Note: This works, but go-lint doesn't like it:
-	//
-	// should omit type *Foo from declaration of var f3; it will be inferred
-	// from the right-hand side
-	//
-	// Shorthand declaration:
-	f3 := &f
-
-	//  ... by which we can directly modify the original struct's public
-	// field 'A' to a new value
-	f3.A = 200
-
-	// Show that the values are NOT distinct
-	fmt.Println(f3.A)
-	fmt.Println(f.A)
+	// declare and initialize 'f2' struct, set values equal to b2.Foo struct
+	var f2 Foo = b2.Foo
+	fmt.Println(f2)
 
 }
