@@ -2,46 +2,35 @@ package main
 
 import "fmt"
 
-type tester interface {
-	// List the method signatures that make a type meet our interface. The
-	// method signatures include a method name, the parameter types, and the
-	// return types.
-	test(int) bool
-}
-
-func runTests(i int, tests []tester) bool {
-	result := true
-	for _, test := range tests {
-
-		// AND the last test result with the current one, declaring success
-		// if both tests pass. Using this approach will result in a final
-		// pass or fail score for the whole slice of "tester" type.
-		result = result && test.test(i)
-	}
-	return result
-}
-
-type rangeTest struct {
-	min int
-	max int
-}
-
-func (rt rangeTest) test(i int) bool {
-	fmt.Printf("rt is %+v\n", rt)
-	return rt.min <= i && i <= rt.max
-}
-
-type divTest int
-
-func (dt divTest) test(i int) bool {
-	fmt.Printf("Testing whether %d mod %d is 0\n", i, i)
-	return i%int(dt) == 0
-}
-
 func main() {
-	result := runTests(10, []tester{
-		rangeTest{min: 5, max: 20},
-		divTest(5),
-	})
-	fmt.Printf("Final test results: %v\n", result)
+
+	// Empty interface; ANY type in Go matches it.
+	// The empty interface is like the "void" pointer in C/C++ or the "object"
+	// type in Java.
+	// This is Go's way of saying, "This could be anything".
+	//
+	// Go provides two ways to get back to the concrete type behind an
+	// interface; there's no way to do anything else with an empty interface.
+	// 1) Type assertion
+	// 2) Type switch
+	var i interface{}
+
+	i = "Hello"
+
+	// Type assertion. You can only do a type assertion on an interface. You
+	// can do a type conversion on any type at all.
+	j := i.(string)
+
+	// If you specify an additional variable (which is "ok" by
+	// convention), ok will be assigned the value of true if the assertion
+	// worked and false if it didn't. If the assertion worked the first
+	// variable specified will get the value from the interface. If the
+	// assertion fails it will be assigned the zero value of that type.
+	k, ok := i.(int)
+	fmt.Println(j, k, ok)
+	// Hello 0 false
+
+	// panic: interface conversion: interface {} is string, not int
+	m := i.(int)
+	fmt.Println(m)
 }
