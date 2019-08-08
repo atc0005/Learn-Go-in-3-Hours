@@ -1,15 +1,27 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"os"
 	"strconv"
 )
 
+type MyError struct {
+	A       int
+	B       int
+	Message string
+}
+
+// Declare a method Error() on a pointer to MyError; this method matches
+// the interface signature for Error, which makes a pointer to MyError
+// implement the Error interface.
+func (me *MyError) Error() string {
+	return fmt.Sprintf("values %d and %d produced error %s", me.A, me.B, me.Message)
+}
+
 func divAndMod(a int, b int) (int, int, error) {
 	if b == 0 {
-		return 0, 0, errors.New("Cannot divide by zero")
+		return 0, 0, &MyError{A: a, B: b, Message: "Cannot divide by zero"}
 	}
 	return a / b, a % b, nil
 }
