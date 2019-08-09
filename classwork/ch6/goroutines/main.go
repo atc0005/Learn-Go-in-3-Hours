@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"time"
+	"sync"
 )
 
 func runMe() {
@@ -10,6 +10,15 @@ func runMe() {
 }
 
 func main() {
-	go runMe()
-	time.Sleep(1 * time.Second)
+
+	var wg sync.WaitGroup
+
+	wg.Add(1)
+
+	go func() {
+		runMe()
+		wg.Done()
+	}()
+
+	wg.Wait()
 }
