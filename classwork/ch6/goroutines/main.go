@@ -5,8 +5,8 @@ import (
 	"sync"
 )
 
-func runMe() {
-	fmt.Println("Hello from a goroutine")
+func runMe(name string) {
+	fmt.Println("Hello to", name, "from a goroutine")
 }
 
 func main() {
@@ -15,10 +15,10 @@ func main() {
 
 	wg.Add(1)
 
-	go func() {
-		runMe()
+	go func(name string) {
+		runMe(name)
 		wg.Done()
-	}()
+	}("Bob")
 
 	wg.Wait()
 }
