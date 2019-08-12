@@ -2,47 +2,39 @@ package main
 
 import "fmt"
 
-func main() {
-	in := make(chan int)
+func multiples(i int) chan int {
 	out := make(chan int)
+	curVal := 0
+	go func() {
+		for {
+			// infinite duration goroutine that continually writes an
+			// incrementing value down the channel
+			// Emphasis: IT NEVER ENDS
+			out <- curVal * i
+			curVal++
+		}
+		// BUG: unreachable code (per go-vet)
+		fmt.Println("Is this ever reached?")
+	}()
 
-	// since this channel is NOT buffered we would be deadlocked here after
-	// writing to the channel (while we wait for the value to be read from the
-	// channel)
-	// fatal error: all goroutines are asleep - deadlock!
-	//out <- 1
-	//
-	// Never reached!
-	//fmt.Println("Made it past sending 1 on the int typed `in` channel")
+	// return the created channel that the goroutine will use to pass values
+	// down for use later
+	return out
+}
 
-	// A Select statement looks a lot like a switch statement, only the cases
-	// are reads and writes to channels. If any case can succeed that read or
-	// write happens and the commands for that case are executed. If we run
-	// this program now we see that we can skip over the case for `in` and go
-	// straight to the case for `out`, then we print out the message that we
-	// got from `out`.
-	//
-	// If more than one case in the Select statement can be run, because
-	// multiple channels are ready to be read or written, the Select statement
-	// picks one case at random to run. It does not go in order. By ensuring
-	// random behavior this prevents certain kinds of deadlocks that can
-	// happen in concurrent systems.
-	select {
+func main() {
+	twosCh := multiples(2)
 
-	// write 2 to the `in` channel.
-	// Blocking writes cause this case to be skipped and the next one
-	// evaluated. To make this case eligible for use, we have to make sure the
-	// channel is buffered. In this example, it is not.
-	case in <- 2:
-		fmt.Println("wrote 2 to in")
-		//fmt.Println(<-in)
-	case v := <-out:
-		fmt.Println("read", v, "from out")
-
-	// In this example, this is the ONLY eligible case statement due to the
-	// other unbuffered channels blocking
-	default:
-		fmt.Println("nothing else works")
+	// ranging over a channel that is closed will trigger the loop to end,
+	// but since the channel is not closed we need some other way to determine
+	// when to exit the for range loop. Here we use the returned value: when
+	// the value exceeds 20 we stop looping.
+	for v := range twosCh {
+		if v > 20 {
+			break
+		}
+		fmt.Println(v)
 	}
 
+	//do more stuff
 }
