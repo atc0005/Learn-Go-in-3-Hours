@@ -2,56 +2,54 @@ package main
 
 import (
 	"fmt"
-	"time"
+	"sync"
 )
 
-func multiples(i int) (chan int, chan struct{}) {
-	out := make(chan int)
-	done := make(chan struct{})
-	curVal := 0
-	go func() {
-		for {
-			select {
-			case out <- curVal * i:
-				fmt.Printf("Current value is %d before post-increment.\n", curVal)
-				curVal++
+func main() {
+	in := make(chan int)
+	in2 := make(chan int)
 
-			// wait for a value to come down this channel; this channel is
-			// skipped as it is not usable until a value comes down the `done`
-			// channel
-			case <-done:
-				fmt.Println("goroutine shutting down")
-				return
-			}
+	var wg sync.WaitGroup
+	wg.Add(3)
+
+	go func() {
+		for i := 0; i < 10; i++ {
+			in <- i
 		}
+		close(in)
+		wg.Done()
 	}()
 
-	// return a channel named `out` that the goroutine will use to pass values
-	// down for use late and a separtate channel named `done` that is used to
-	// control when the goroutine will end
-	return out, done
-}
-
-func main() {
-	twosCh, done := multiples(2)
-
-	for v := range twosCh {
-		if v > 20 {
-			break
+	go func() {
+		for i := 100; i < 110; i++ {
+			in2 <- i
 		}
-		fmt.Println(v)
-	}
+		close(in2)
+		wg.Done()
+	}()
 
-	// signal our goroutine that it should stop
-	close(done)
-	//
-	// Q: How quickly does it stop? Are we waiting for the "random" case for
-	// reading the `done` channel to hit or is it immediate?
-	//
-	// A: Brief testing shows that the curVal variable is incremented once
-	// more and sent down the channel (11), but is never read, so the rest
-	// of this application never sees it.
+	go func() {
+		count := 0
+		for count < 2 {
+			select {
+			case i, ok := <-in:
+				if !ok {
+					count++
+					in = nil
+					continue
+				}
+				fmt.Println("from in, result is", i*2)
+			case i, ok := <-in2:
+				if !ok {
+					count++
+					in2 = nil
+					continue
+				}
+				fmt.Println("from in2, result is", i+2)
+			}
+		}
+		wg.Done()
+	}()
 
-	//do more stuff
-	time.Sleep(1 * time.Second)
+	wg.Wait()
 }
