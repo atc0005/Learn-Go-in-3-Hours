@@ -3,7 +3,7 @@ package main
 import "fmt"
 
 func main() {
-	in := make(chan int)
+	in := make(chan int, 1)
 	out := make(chan int, 1)
 
 	// since this channel is buffered we're not blocked trying to write to
@@ -23,8 +23,14 @@ func main() {
 	// random behavior this prevents certain kinds of deadlocks that can
 	// happen in concurrent systems.
 	select {
+
+	// write 2 to the `in` channel.
+	// Blocking writes cause this case to be skipped and the next one
+	// evaluated. To make this case eligible for use, we have to make sure the
+	// channel is buffered.
 	case in <- 2:
 		fmt.Println("wrote 2 to in")
+		//fmt.Println(<-in)
 	case v := <-out:
 		fmt.Println("read", v, "from out")
 	}
